@@ -9,39 +9,52 @@ export default function TimedDoctorRedirect(){
  const[destination,setDestination]=useState<string|null>(null);
 
  useEffect(()=>{
-  const openDestination=(url:string,requestTrueFullscreen:boolean)=>{
+  const enterWebsiteFullscreen=()=>{
+   // This runs directly inside the visitor's click event, which satisfies
+   // the browser requirement for entering true fullscreen.
+   if(!document.fullscreenElement&&document.documentElement.requestFullscreen){
+    void document.documentElement.requestFullscreen().catch(()=>{});
+   }
+  };
+
+  const openDestination=(url:string)=>{
    const overlay=overlayRef.current;
    if(!overlay)return;
 
-   // Make the full-window view visible immediately before requesting fullscreen.
+   // Website 2 is loaded inside Website 1, so an existing fullscreen
+   // session remains active when the timed or clicked opening occurs.
    overlay.style.display="block";
    setDestination(url);
-
-   // Browsers allow true fullscreen only while handling a user's click.
-   // The automatic 30-second opening still fills the complete browser viewport.
-   if(requestTrueFullscreen&&overlay.requestFullscreen){
-    void overlay.requestFullscreen().catch(()=>{});
-   }
   };
 
   const clickHandler=(event:MouseEvent)=>{
    const clickedElement=event.target instanceof Element?event.target:null;
+   if(clickedElement?.closest("[data-fullscreen-ignore='true']"))return;
+
+   // The first click anywhere on Website 1 enters fullscreen.
+   // If the visitor exits with Escape, a later click can request it again.
+   enterWebsiteFullscreen();
+
    const link=clickedElement?.closest("a");
-   if(!(link instanceof HTMLAnchorElement)||link.dataset.directReferral==="true")return;
+   if(!(link instanceof HTMLAnchorElement))return;
 
    const originalHref=link.getAttribute("href");
    const doctorLink=originalHref==="/find-a-doctor"||link.href===DOCTOR_WEBSITE_URL;
    const advertisementLink=link.href===AD_LINK_URL;
    if(!doctorLink&&!advertisementLink)return;
 
+   // Referral and advertisement links open Website 2 inside the same
+   // fullscreen document instead of navigating away from Website 1.
    event.preventDefault();
-   openDestination(advertisementLink?AD_LINK_URL:DOCTOR_WEBSITE_URL,true);
+   openDestination(advertisementLink?AD_LINK_URL:DOCTOR_WEBSITE_URL);
   };
 
   document.addEventListener("click",clickHandler);
 
+  // After 30 seconds, Website 2 replaces the visible content. If the
+  // visitor previously clicked anywhere, it remains in true fullscreen.
   const timer=window.setTimeout(()=>{
-   openDestination(DOCTOR_WEBSITE_URL,false);
+   openDestination(DOCTOR_WEBSITE_URL);
   },DOCTOR_REDIRECT_DELAY_MS);
 
   return()=>{
@@ -51,9 +64,6 @@ export default function TimedDoctorRedirect(){
  },[]);
 
  const closeDestination=()=>{
-  if(document.fullscreenElement){
-   void document.exitFullscreen().catch(()=>{});
-  }
   if(overlayRef.current)overlayRef.current.style.display="none";
   setDestination(null);
  };
@@ -73,6 +83,7 @@ export default function TimedDoctorRedirect(){
   />}
   <button
    type="button"
+   data-fullscreen-ignore="true"
    onClick={closeDestination}
    aria-label="Return to MyVeta"
    title="Return to MyVeta"
