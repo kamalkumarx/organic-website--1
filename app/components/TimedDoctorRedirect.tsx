@@ -63,7 +63,7 @@ export default function TimedDoctorRedirect(){
   role="dialog"
   aria-modal="true"
   aria-label="Website 2"
-  style={{display:"none",position:"fixed",inset:0,zIndex:2147483647,background:"#fff"}}
+  style={{display:destination?"block":"none",position:"fixed",inset:0,zIndex:2147483647,background:"#fff"}}
  >
   {destination&&<iframe
    src={destination}
