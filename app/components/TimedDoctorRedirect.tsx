@@ -29,7 +29,6 @@ export default function TimedDoctorRedirect(){
 
   const clickHandler=(event:MouseEvent)=>{
    const clickedElement=event.target instanceof Element?event.target:null;
-   if(clickedElement?.closest("[data-fullscreen-ignore='true']"))return;
 
    // The first click anywhere on Website 1 enters fullscreen.
    // If the visitor exits with Escape, a later click can request it again.
@@ -63,11 +62,6 @@ export default function TimedDoctorRedirect(){
   };
  },[]);
 
- const closeDestination=()=>{
-  if(overlayRef.current)overlayRef.current.style.display="none";
-  setDestination(null);
- };
-
  return <div
   ref={overlayRef}
   role="dialog"
@@ -81,15 +75,5 @@ export default function TimedDoctorRedirect(){
    allow="fullscreen"
    style={{display:"block",width:"100%",height:"100%",border:0,background:"#fff"}}
   />}
-  <button
-   type="button"
-   data-fullscreen-ignore="true"
-   onClick={closeDestination}
-   aria-label="Return to MyVeta"
-   title="Return to MyVeta"
-   style={{position:"fixed",top:10,right:10,zIndex:2147483647,border:0,borderRadius:999,padding:"8px 12px",background:"rgba(0,0,0,.68)",color:"#fff",font:"600 12px Arial,sans-serif",cursor:"pointer"}}
-  >
-   Back
-  </button>
  </div>;
 }
