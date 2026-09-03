@@ -4,11 +4,11 @@
  * Netlify automatically provides its production URL through `URL`.
  * If you later connect a custom domain, set `NEXT_PUBLIC_SITE_URL` in
  * Netlify to that complete address, for example:
- * https://www.myveta-example.com
+ * https://oldagehealthcare.netlify.app
  *
  * The fallback below is used only when neither environment value exists.
  */
-const DEFAULT_SITE_URL = "https://splendorous-meerkat-209edf.netlify.app";
+const DEFAULT_SITE_URL = "https://oldagehealthcare.netlify.app";
 
 function normalizeSiteUrl(value: string) {
   const trimmed = value.trim().replace(/\/+$/, "");
