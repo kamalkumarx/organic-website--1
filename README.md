@@ -2,6 +2,35 @@
 
 This is the final public MyVeta website without login, ready for VS Code, GitHub, and Netlify.
 
+## Google Search and SEO settings
+
+The site automatically publishes:
+
+- `/robots.txt` so Google and other search engines may crawl the public pages;
+- `/sitemap.xml` with the public pages and condition guides;
+- MyVeta title, description, canonical URL, social-sharing metadata, and site-name structured data.
+
+SEO settings are kept in:
+
+`app/config/seo.ts`
+
+Netlify automatically provides the production site URL. If you connect a custom domain,
+add this environment variable in Netlify and redeploy:
+
+```text
+NEXT_PUBLIC_SITE_URL=https://www.your-domain.com
+```
+
+For Google Search Console HTML-tag verification, copy only the verification code from
+Google and add it in Netlify as:
+
+```text
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your-google-verification-code
+```
+
+After deployment, submit `https://www.your-domain.com/sitemap.xml` in Google Search
+Console and use URL Inspection to request indexing of the homepage.
+
 ## Change the doctor website later
 
 Open:
